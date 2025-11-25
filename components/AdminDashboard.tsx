@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
-import { InventorySession, InventoryStatus, InventoryEntry, InventoryItem, Site } from '../types';
-import { Button } from './Button';
+import { InventorySession, InventoryStatus, InventoryEntry, InventoryItem, Site } from '../types.ts';
+import { Button } from './Button.tsx';
 import { FileSpreadsheet, Lock, RefreshCcw, Edit2, Plus, Trash2, Settings, X, FileEdit, Unlock, Eye, Calendar, Building2, ArrowRight, Box } from 'lucide-react';
 
 interface Props {

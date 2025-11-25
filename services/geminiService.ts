@@ -1,6 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Safely access process.env to prevent crashes in browser environments (like GitHub Pages)
+const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : '';
+const ai = new GoogleGenAI({ apiKey });
 
 /**
  * Checks if an inventory quantity is illogical using Gemini.
@@ -12,7 +14,7 @@ export const checkInventoryAnomaly = async (
 ): Promise<{ isSuspicious: boolean; message?: string }> => {
   
   // If no API key, fallback to basic logic to allow app demo to work without crashing
-  if (!process.env.API_KEY) {
+  if (!apiKey) {
     console.warn("Gemini API Key missing. Using fallback logic.");
     return { isSuspicious: false };
   }

@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
-import { InventorySession, InventoryItem, InventoryEntry } from '../types';
-import { Button } from './Button';
-import { checkInventoryAnomaly } from '../services/geminiService';
+import { InventorySession, InventoryItem, InventoryEntry } from '../types.ts';
+import { Button } from './Button.tsx';
+import { checkInventoryAnomaly } from '../services/geminiService.ts';
 import { AlertTriangle, CheckCircle, Save, ArrowLeft, ArrowRight, Send, Loader2, X } from 'lucide-react';
 
 interface Props {

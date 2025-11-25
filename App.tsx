@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
-import { AdminDashboard } from './components/AdminDashboard';
-import { SupervisorDashboard } from './components/SupervisorDashboard';
-import { UserRole, InventorySession, InventoryItem, InventoryEntry, Site } from './types';
-import { Button } from './components/Button';
+import { AdminDashboard } from './components/AdminDashboard.tsx';
+import { SupervisorDashboard } from './components/SupervisorDashboard.tsx';
+import { UserRole, InventorySession, InventoryItem, InventoryEntry, Site } from './types.ts';
+import { Button } from './components/Button.tsx';
 import { Users, LayoutDashboard, CheckCircle, ArrowRight, ClipboardList, Building2, Calendar } from 'lucide-react';
 
 // Helper to sort items by code naturally (e.g. 11BG1 before 11BG2, 2 before 10)
