@@ -1,0 +1,5 @@
+{
+  "name": "Jarda - Smart Inventory",
+  "description": "A smart catering inventory management system connecting field supervisors with administration. Features AI-powered anomaly detection and Excel export.",
+  "requestFramePermissions": []
+}
