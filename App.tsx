@@ -194,7 +194,7 @@ export default function App() {
                  <LayoutDashboard size={24} className="text-blue-700" />
               </div>
               <div className="text-right">
-                <p className="font-bold text-gray-800">مدير النظام</p>
+                <p className="font-bold text-gray-800">الإداري</p>
                 <p className="text-xs text-gray-500">إدارة المواقع والجرد</p>
               </div>
             </button>
