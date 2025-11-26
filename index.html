@@ -188,15 +188,27 @@
                 if (qty !== null && qty !== undefined && !warningMessage) {
                     let isSuspicious = false;
                     let message = '';
-                    if (currentItem.minQuantity && (qty < currentItem.minQuantity || qty > currentItem.maxQuantity)) {
+                    
+                    const min = currentItem.minQuantity;
+                    const max = currentItem.maxQuantity;
+
+                    // Updated Logic: Check ranges individually
+                    if ((min !== undefined && qty < min) || (max !== undefined && qty > max)) {
                         isSuspicious = true;
-                        message = `الكمية خارج المدى (${currentItem.minQuantity}-${currentItem.maxQuantity}). متأكد؟`;
-                    } else if (qty > 50) {
+                        if (min !== undefined && max !== undefined) {
+                             message = `الرقم خارج النطاق (${min} - ${max}). هل انت متأكد من صحة الرقم؟`;
+                        } else if (min !== undefined) {
+                             message = `الرقم أقل من الحد الأدنى (${min}). هل انت متأكد من صحة الرقم؟`;
+                        } else {
+                             message = `الرقم أعلى من الحد الأعلى (${max}). هل انت متأكد من صحة الرقم؟`;
+                        }
+                    } else if (qty > 50 && !max) { // Fallback AI check only if no explicit Max is set
                         setIsChecking(true);
                         const check = await checkInventoryAnomaly(currentItem.name, currentItem.unit, qty);
                         setIsChecking(false);
                         if (check.isSuspicious) { isSuspicious = true; message = check.message; }
                     }
+                    
                     if (isSuspicious) { setWarningMessage(message); return; }
                 }
                 setWarningMessage(null);
@@ -428,12 +440,12 @@
                                     <input placeholder="الاسم" className="border p-2 rounded text-sm" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required/>
                                     <input placeholder="كود" className="border p-2 rounded text-sm" value={newItem.code} onChange={e => setNewItem({...newItem, code: e.target.value})} required/>
                                     <input placeholder="وحدة" className="border p-2 rounded text-sm" value={newItem.unit} onChange={e => setNewItem({...newItem, unit: e.target.value})} required/>
-                                    <div className="flex gap-1 col-span-2 md:col-span-2"><input placeholder="Min" type="number" className="border p-2 rounded text-sm w-1/2" value={newItem.min} onChange={e => setNewItem({...newItem, min: e.target.value})}/><Button type="submit" className="flex-1 text-sm py-1"><Icon name="Plus"/></Button></div>
+                                    <div className="flex gap-1 col-span-2 md:col-span-2"><input placeholder="أدنى" type="number" className="border p-2 rounded text-sm w-1/2" value={newItem.min} onChange={e => setNewItem({...newItem, min: e.target.value})}/><input placeholder="أعلى" type="number" className="border p-2 rounded text-sm w-1/2" value={newItem.max} onChange={e => setNewItem({...newItem, max: e.target.value})}/><Button type="submit" className="flex-1 text-sm py-1"><Icon name="Plus"/></Button></div>
                                 </form>
                                 <div className="max-h-60 overflow-auto border rounded-lg">
                                     <table className="w-full text-right text-sm">
-                                        <thead className="bg-gray-100 sticky top-0"><tr><th className="p-2">كود</th><th className="p-2">اسم</th><th className="p-2">حذف</th></tr></thead>
-                                        <tbody className="divide-y">{templateItems.map(i => <tr key={i.id}><td className="p-2 font-mono text-gray-500">{i.code}</td><td className="p-2">{i.name}</td><td className="p-2"><button onClick={() => onDeleteTemplateItem(i.id)} className="text-red-500"><Icon name="Trash2" size={16}/></button></td></tr>)}</tbody>
+                                        <thead className="bg-gray-100 sticky top-0"><tr><th className="p-2">كود</th><th className="p-2">اسم</th><th className="p-2">المدى</th><th className="p-2">حذف</th></tr></thead>
+                                        <tbody className="divide-y">{templateItems.map(i => <tr key={i.id}><td className="p-2 font-mono text-gray-500">{i.code}</td><td className="p-2">{i.name}</td><td className="p-2 text-xs" dir="ltr">{i.minQuantity||'-'} / {i.maxQuantity||'-'}</td><td className="p-2"><button onClick={() => onDeleteTemplateItem(i.id)} className="text-red-500"><Icon name="Trash2" size={16}/></button></td></tr>)}</tbody>
                                     </table>
                                 </div>
                             </div>
@@ -445,16 +457,16 @@
                                 <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90dvh] flex flex-col animate-in zoom-in-95">
                                     <div className="p-4 border-b flex justify-between"><h2 className="font-bold">إدارة مواد الجرد</h2><button onClick={() => setSessionToManageItems(null)}><Icon name="X"/></button></div>
                                     <div className="p-4 overflow-y-auto flex-1">
-                                        <form onSubmit={(e) => handleAddItem(e, false)} className="bg-blue-50 p-3 rounded mb-4 grid grid-cols-2 md:grid-cols-4 gap-2">
+                                        <form onSubmit={(e) => handleAddItem(e, false)} className="bg-blue-50 p-3 rounded mb-4 grid grid-cols-2 md:grid-cols-5 gap-2">
                                             <input placeholder="الاسم" className="border p-2 rounded text-sm" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required/>
                                             <input placeholder="كود" className="border p-2 rounded text-sm" value={newItem.code} onChange={e => setNewItem({...newItem, code: e.target.value})} required/>
                                             <input placeholder="وحدة" className="border p-2 rounded text-sm" value={newItem.unit} onChange={e => setNewItem({...newItem, unit: e.target.value})} required/>
-                                            <Button type="submit" className="text-sm py-1"><Icon name="Plus"/> إضافة</Button>
+                                            <div className="flex gap-1 col-span-2 md:col-span-2"><input placeholder="أدنى" type="number" className="border p-2 rounded text-sm w-1/2" value={newItem.min} onChange={e => setNewItem({...newItem, min: e.target.value})}/><input placeholder="أعلى" type="number" className="border p-2 rounded text-sm w-1/2" value={newItem.max} onChange={e => setNewItem({...newItem, max: e.target.value})}/><Button type="submit" className="flex-1 text-sm py-1"><Icon name="Plus"/></Button></div>
                                         </form>
                                         <div className="overflow-x-auto">
                                             <table className="w-full text-right text-sm min-w-[500px]">
-                                                <thead className="bg-gray-100"><tr><th className="p-2">كود</th><th className="p-2">اسم</th><th className="p-2">حذف</th></tr></thead>
-                                                <tbody className="divide-y">{sessionToManageItems.items.map(i => <tr key={i.id}><td className="p-2 font-mono">{i.code}</td><td className="p-2">{i.name}</td><td className="p-2"><button onClick={() => {
+                                                <thead className="bg-gray-100"><tr><th className="p-2">كود</th><th className="p-2">اسم</th><th className="p-2">المدى</th><th className="p-2">حذف</th></tr></thead>
+                                                <tbody className="divide-y">{sessionToManageItems.items.map(i => <tr key={i.id}><td className="p-2 font-mono">{i.code}</td><td className="p-2">{i.name}</td><td className="p-2 text-xs" dir="ltr">{i.minQuantity||'-'} / {i.maxQuantity||'-'}</td><td className="p-2"><button onClick={() => {
                                                     const updated = sessionToManageItems.items.filter(x => x.id !== i.id);
                                                     onUpdateSessionItems(sessionToManageItems.id, updated);
                                                     setSessionToManageItems({...sessionToManageItems, items: updated});
