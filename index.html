@@ -87,7 +87,7 @@
     <script type="text/babel" data-presets="react">
         const { useState, useEffect, useRef } = React;
 
-        // --- ICONS ---
+        // --- ICONS (Lucide Alternatives) ---
         const Icon = ({ name, size = 20, className = "" }) => {
             const icons = {
                 LayoutDashboard: <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>,
@@ -132,8 +132,7 @@
 
         // --- API SERVICE ---
         const checkInventoryAnomaly = async (itemName, unit, quantity) => {
-            // Simulated API call - Replaced expensive google/genai lib with simple heuristic for this file-only version
-            // In a real app, this would call your backend or a cloud function
+            // Placeholder for AI Check logic
             return { isSuspicious: false };
         };
 
@@ -179,7 +178,6 @@
                     const min = currentItem.minQuantity;
                     const max = currentItem.maxQuantity;
 
-                    // Updated Logic: Check ranges individually
                     if ((min !== undefined && qty < min) || (max !== undefined && qty > max)) {
                         isSuspicious = true;
                         if (min !== undefined && max !== undefined) {
@@ -190,8 +188,7 @@
                              message = `الرقم أعلى من الحد الأعلى (${max}). هل انت متأكد من صحة الرقم؟`;
                         }
                     } else if (qty > 50 && !max) { 
-                         // Check large numbers only if no max range set
-                         // Simplified check for local version
+                         // Simplified check
                     }
                     
                     if (isSuspicious) { setWarningMessage(message); return; }
@@ -217,7 +214,7 @@
                 onUpdateSession({ ...session, entries: localEntries, status: 'submitted' });
             };
 
-            // Focus Mode (Mobile Optimized)
+            // Focus Mode
             if (viewMode === 'focus') {
                 return (
                     <div className="max-w-md mx-auto flex flex-col min-h-dvh bg-gray-50 pb-20">
@@ -228,7 +225,9 @@
                         <div className="flex-1 px-4 flex flex-col justify-center pb-20">
                             <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-gray-100 text-center relative">
                                 <div className="absolute top-4 left-4 text-xs text-gray-300 font-mono">#{currentItem.code}</div>
-                                <span className="inline-block px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-500 mb-4">{currentItem.brand || 'عام'}</span>
+                                {currentItem.brand && (
+                                    <span className="inline-block px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-500 mb-4">{currentItem.brand}</span>
+                                )}
                                 <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">كم يوجد؟</h2>
                                 <h3 className="text-xl md:text-2xl text-primary font-bold mb-6 line-clamp-2">{currentItem.name}</h3>
                                 <div className="relative mb-6">
@@ -260,7 +259,7 @@
                 );
             }
 
-            // List Mode (Mobile Optimized)
+            // List Mode
             const filledCount = Object.values(localEntries).filter(e => e.quantity !== null).length;
             const isComplete = filledCount === items.length;
 
@@ -333,8 +332,8 @@
             const [modal, setModal] = useState(null); 
             const [tempName, setTempName] = useState('');
             const [tempDates, setTempDates] = useState({ start: '', end: '' });
-            const [editingItem, setEditingItem] = useState(null); // Track item being edited
-            const [sessionToEditDate, setSessionToEditDate] = useState(null); // Track session to edit date
+            const [editingItem, setEditingItem] = useState(null);
+            const [sessionToEditDate, setSessionToEditDate] = useState(null);
 
             const initialItemState = { name: '', code: '', brand: '', unit: '', min: '', max: '' };
             const [newItem, setNewItem] = useState(initialItemState);
@@ -463,8 +462,8 @@
                                     <div className="p-4 border-b flex justify-between"><h2 className="font-bold">التفاصيل</h2><button onClick={() => setModal(null)}><Icon name="X"/></button></div>
                                     <div className="p-4 overflow-y-auto flex-1">
                                         <table className="w-full text-right text-sm md:text-base">
-                                            <thead className="bg-gray-50 text-gray-500"><tr><th className="p-2">مادة</th><th className="p-2">كمية</th><th className="p-2">الحجم</th></tr></thead>
-                                            <tbody className="divide-y">{modal.data.items.map(i => <tr key={i.id}><td className="p-3">{i.name}</td><td className="p-3 font-bold text-primary">{modal.data.entries[i.id]?.quantity ?? '--'}</td><td className="p-3 text-gray-500">{i.unit}</td></tr>)}</tbody>
+                                            <thead className="bg-gray-50 text-gray-500"><tr><th className="p-2">مادة</th><th className="p-2">كود</th><th className="p-2">كمية</th><th className="p-2">الحجم</th></tr></thead>
+                                            <tbody className="divide-y">{modal.data.items.map(i => <tr key={i.id}><td className="p-3">{i.name}</td><td className="p-3 font-mono text-xs">{i.code}</td><td className="p-3 font-bold text-primary">{modal.data.entries[i.id]?.quantity ?? '--'}</td><td className="p-3 text-gray-500">{i.unit}</td></tr>)}</tbody>
                                         </table>
                                     </div>
                                 </div>
