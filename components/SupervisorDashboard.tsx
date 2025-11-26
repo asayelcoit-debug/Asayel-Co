@@ -194,7 +194,7 @@ export const SupervisorDashboard: React.FC<Props> = ({ session, items, onUpdateS
   }
 
   // --- Render List Mode (Review) ---
-  const filledCount = Object.values(localEntries).filter(e => e.quantity !== null).length;
+  const filledCount = Object.values(localEntries).filter((e: InventoryEntry) => e.quantity !== null).length;
   const isComplete = filledCount === items.length;
 
   return (
